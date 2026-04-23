@@ -1,17 +1,52 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>org.jetbrains.plugins.template</id>
+    <!-- Unique plugin identifier. Must not change once the plugin is published. -->
+    <id>com.hristobozhkov.todo-expander</id>
     <name>TODO Expander</name>
-    <vendor>Hristo</vendor>
-    <description>Sends TODO comments to Anthropic AI and displays concrete implementation suggestions inline.</description>
+
+    <!-- Version is injected at build time from gradle.properties via the IntelliJ Platform Gradle Plugin. -->
+
+    <vendor email="hristogaming@gmail.com" url="https://github.com/hristobozhkov">Hristo Bozhkov</vendor>
+
+    <!--
+        The description block between the markers is extracted by build.gradle.kts and used as
+        the plugin's marketplace description. Keep it self-contained and HTML-friendly.
+    -->
+    <!-- Plugin description -->
+    Expands <b>TODO comments</b> into concrete code using AI via <a href="https://openrouter.ai">OpenRouter</a>.
+
+    <p>Place the cursor on any <code>TODO</code> line, invoke <b>Expand TODO with AI</b> from the
+    editor context menu or the <b>Tools</b> menu, and review the AI-generated implementation in a
+    preview dialog before it is inserted. The plugin automatically detects the file language and
+    includes it in the prompt, and replaces common stub placeholders
+    (<code>TODO()</code>, <code>throw NotImplementedError</code>, <code>pass</code>, etc.)
+    instead of blindly appending code.</p>
+
+    <p>Configure your OpenRouter API key under <b>Settings → Tools → TODO Expander</b>.
+    The key is stored securely in the platform keychain — never in plaintext.</p>
+    <!-- Plugin description end -->
+
+    <!-- Change notes are injected at build time from CHANGELOG.md via the Gradle Changelog Plugin. -->
+    <change-notes>Initial release.</change-notes>
 
     <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Balloon notification group used for user-facing feedback (no TODO found, key missing, etc.). -->
+        <notificationGroup id="TODO Expander" displayType="BALLOON" isLogByDefault="true"/>
+
+        <applicationConfigurable
+            parentId="tools"
+            instance="org.jetbrains.plugins.template.settings.TodoExpanderConfigurable"
+            id="com.hristobozhkov.todo-expander.settings"
+            displayName="TODO Expander"/>
+    </extensions>
 
     <actions>
         <action id="TodoExpander.ExpandTodo"
                 class="org.jetbrains.plugins.template.actions.TodoExpanderAction"
                 text="Expand TODO with AI"
-                description="Ask Claude to suggest a concrete implementation for the TODO under the cursor">
+                description="Ask an AI model to suggest a concrete implementation for the TODO under the cursor">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
